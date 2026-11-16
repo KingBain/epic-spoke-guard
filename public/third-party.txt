@@ -1,0 +1,16 @@
+Epic Spoke Guard
+Copyright (c) 2026 John Bain. See epic-spoke-guard-license.txt.
+
+OpenSCAD WebAssembly (openscad-wasm-prebuilt 1.2.0)
+See openscad-copying.txt for the GNU GPL notice distributed with the package.
+Package: https://www.npmjs.com/package/openscad-wasm-prebuilt/v/1.2.0
+Source and build scripts for this release:
+https://github.com/lorenzowritescode/openscad-wasm/tree/1ba53f14259ed72aeb256df1cba739de2517c8fb
+OpenSCAD upstream: https://github.com/openscad/openscad
+
+Three.js
+See three-license.txt for the MIT license.
+Source: https://github.com/mrdoob/three.js
+
+Open Sans ExtraBold outlines are embedded in the OpenSCAD file, with
+copyright and Apache-2.0 license text included in that file.

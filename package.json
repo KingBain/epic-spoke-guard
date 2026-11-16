@@ -1,0 +1,19 @@
+{
+  "name": "epic-spoke-guard",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && node scripts/copy-licenses.js",
+    "preview": "vite preview"
+  },
+  "license": "MIT",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "openscad-wasm-prebuilt": "1.2.0",
+    "three": "0.187.0"
+  },
+  "devDependencies": {
+    "vite": "7.3.8"
+  }
+}
