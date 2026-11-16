@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#15191e">
+    <meta name="description" content="Customize the Epic Spoke Guard and download a printable STL.">
+    <title>Epic Spoke Guard Customizer</title>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="./">
+        <span class="brand-icon" aria-hidden="true">✳</span>
+        Epic Spoke Guard
+      </a>
+      <a class="source-link" href="https://github.com/KingBain/epic-spoke-guard">GitHub ↗</a>
+    </header>
+
+    <main class="workspace">
+      <aside class="panel">
+        <div class="panel-title">
+          <h1>Customize</h1>
+          <button id="reset" type="button" class="quiet" form="settings">Reset defaults</button>
+        </div>
+        <form id="settings">
+          <fieldset>
+            <legend>Lettering</legend>
+            <label for="rim-text">Rim text</label>
+            <input id="rim-text" name="rim_text" type="text" maxlength="120" autocomplete="off" spellcheck="false" aria-describedby="rim-help">
+            <p id="rim-help" class="hint">Separate phrases with <kbd>|</kbd>. Use A–Z, 0–9, spaces or <span class="punctuation">. , ! ? &amp; ' - + /</span>. Long phrases auto-fit.</p>
+          </fieldset>
+
+          <fieldset>
+            <legend>Dividers</legend>
+            <label class="toggle">
+              <span>Show dividers<small>Three rounded slots between phrases</small></span>
+              <input name="show_dividers" type="checkbox">
+            </label>
+            <label class="toggle">
+              <span>Float dividers<small>Adjust spacing to fit each phrase</small></span>
+              <input name="float_dividers" type="checkbox">
+            </label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Centre hub</legend>
+            <div class="dimensions">
+              <label>Hole diameter <span class="unit">mm</span>
+                <input name="center_hole_diameter" type="number" min="0.01" max="43.4" step="0.01" required>
+              </label>
+              <label>Shoulder height <span class="unit">mm</span>
+                <input name="center_shoulder_height" type="number" min="1.455" step="any" required>
+              </label>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Export</legend>
+            <label for="export-part">STL part</label>
+            <select id="export-part" name="export_part">
+              <option>Complete guard</option>
+              <option>Black body</option>
+              <option>White letter faces</option>
+            </select>
+            <p class="hint">For two colours, export both colour parts with the same settings and import them as one object in your slicer.</p>
+          </fieldset>
+          <div class="actions">
+            <button id="generate" class="primary" type="submit">Generate model</button>
+            <button id="cancel" type="button" hidden>Cancel</button>
+          </div>
+        </form>
+      </aside>
+
+      <section class="viewer" aria-labelledby="preview-title">
+        <div class="viewer-header">
+          <div>
+            <h2 id="preview-title">3D preview</h2>
+            <p id="model-label">210 mm spoke guard</p>
+          </div>
+          <button id="download" type="button" disabled>Download STL <span aria-hidden="true">↓</span></button>
+        </div>
+        <div id="viewport" aria-label="Interactive spoke guard preview"></div>
+        <div class="viewer-footer">
+          <p id="status" role="status">Loading customizer…</p>
+          <div id="view-controls" class="view-controls" hidden>
+            <button id="top-view" type="button">Top view</button>
+            <button id="reset-view" type="button">Reset view</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <span>Models are generated in your browser.</span>
+      <div><a href="https://github.com/KingBain/epic-spoke-guard/blob/main/Customizable_Spoke_Guard.scad">OpenSCAD model</a><a href="./third-party.txt">Third-party notices</a></div>
+    </footer>
+    <noscript>Enable JavaScript to generate and download a model.</noscript>
+    <script type="module" src="/site/main.js"></script>
+  </body>
+</html>
