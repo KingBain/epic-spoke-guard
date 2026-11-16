@@ -7,6 +7,9 @@ const fields = form.elements;
 const generate = document.querySelector('#generate');
 const cancel = document.querySelector('#cancel');
 const download = document.querySelector('#download');
+const share = document.querySelector('#share');
+const shareStatus = document.querySelector('#share-status');
+const shareUrl = document.querySelector('#share-url');
 const status = document.querySelector('#status');
 const modelLabel = document.querySelector('#model-label');
 const rimText = fields.rim_text;
@@ -58,11 +61,14 @@ function matches(current, previous) {
 function refresh() {
   generate.disabled = !source || Boolean(running);
   cancel.hidden = !running;
+  share.disabled = !source;
   form.setAttribute('aria-busy', String(Boolean(running)));
   download.disabled = Boolean(running) || !result || !matches(settings(), result.settings);
 }
 
 function onChange() {
+  shareStatus.textContent = '';
+  shareUrl.hidden = true;
   rimText.setCustomValidity('');
   refresh();
   if (running || !source) return;
@@ -73,19 +79,35 @@ function onChange() {
   }
 }
 
-function applyDefaults() {
-  for (const [name, value] of Object.entries(defaults)) {
+function applySettings(values) {
+  for (const [name, value] of Object.entries(values)) {
     if (typeof value === 'boolean') fields[name].checked = value;
     else fields[name].value = value;
   }
-  onChange();
 }
 
-function render() {
-  const parameters = settings();
+function readSharedSettings() {
+  const query = new URLSearchParams(location.search);
+  const values = { ...defaults };
+  for (const name of defaultNames) {
+    if (!query.has(name)) continue;
+    const value = query.get(name);
+    if (typeof defaults[name] === 'boolean') {
+      if (value !== 'true' && value !== 'false') return null;
+      values[name] = value === 'true';
+    } else {
+      values[name] = value;
+    }
+  }
+  return values;
+}
+
+function validateSettings(parameters) {
   const groups = parameters.rim_text.split('|').filter((group) => group.trim());
   let problem = '';
-  if (/[^A-Za-z0-9 .,!?&'+/|\-]/.test(parameters.rim_text)) {
+  if (parameters.rim_text.length > rimText.maxLength) {
+    problem = `Use at most ${rimText.maxLength} characters.`;
+  } else if (/[^A-Za-z0-9 .,!?&'+/|\-]/.test(parameters.rim_text)) {
     problem = 'Use only the supported characters listed below Rim text.';
   } else if (groups.length > 11) {
     problem = 'Use at most 11 non-empty text groups.';
@@ -93,7 +115,15 @@ function render() {
     problem = 'Enter rim text to export the letter faces.';
   }
   rimText.setCustomValidity(problem);
-  if (!form.reportValidity()) return;
+  return Object.hasOwn(fileNames, parameters.export_part) && form.checkValidity();
+}
+
+function render() {
+  const parameters = settings();
+  if (!validateSettings(parameters)) {
+    form.reportValidity();
+    return;
+  }
 
   let worker;
   try {
@@ -135,7 +165,7 @@ function render() {
     modelLabel.textContent = parameters.export_part;
     if (download.disabled) {
       setStatus('The preview uses the previous settings. Generate again to apply your changes.');
-    } else if (!groups.length && !parameters.show_dividers) {
+    } else if (!parameters.rim_text.replaceAll('|', '').trim() && !parameters.show_dividers) {
       setStatus('Model ready. With no lettering or dividers, the centre and rim are separate pieces.');
     } else {
       setStatus(viewer ? 'Model ready · Drag to rotate, scroll or pinch to zoom.' : 'STL ready to download.');
@@ -156,11 +186,37 @@ form.addEventListener('submit', (event) => {
   if (!generate.disabled) render();
 });
 document.querySelector('#reset').addEventListener('click', () => {
-  if (defaults) applyDefaults();
+  if (!defaults) return;
+  applySettings(defaults);
+  onChange();
 });
 cancel.addEventListener('click', () => {
   running?.();
   setStatus('Generation cancelled.');
+});
+share.addEventListener('click', async () => {
+  const parameters = settings();
+  if (!validateSettings(parameters)) {
+    form.reportValidity();
+    return;
+  }
+  const url = new URL(location.pathname, location.origin);
+  for (const [name, value] of Object.entries(parameters)) url.searchParams.set(name, value);
+
+  const link = url.href;
+  try {
+    await navigator.clipboard.writeText(link);
+    if (!matches(settings(), parameters)) return;
+    shareUrl.hidden = true;
+    shareStatus.textContent = 'Settings link copied.';
+  } catch {
+    if (!matches(settings(), parameters)) return;
+    shareStatus.textContent = 'Copy the settings link below.';
+    shareUrl.value = link;
+    shareUrl.hidden = false;
+    shareUrl.focus();
+    shareUrl.select();
+  }
 });
 download.addEventListener('click', () => {
   if (download.disabled) return;
@@ -182,7 +238,12 @@ try {
     name, JSON.parse(model.match(new RegExp(`^${name}\\s*=\\s*(.+?);`, 'm'))[1]),
   ]));
   source = model;
-  applyDefaults();
+  const shared = readSharedSettings();
+  applySettings(shared ?? defaults);
+  const invalidLink = !shared || !validateSettings(settings());
+  if (invalidLink) applySettings(defaults);
+  onChange();
+  if (invalidLink) shareStatus.textContent = 'The settings link is invalid. Model defaults were loaded.';
   render();
 } catch {
   setStatus('Could not load the OpenSCAD model. Reload the page to try again.', true);

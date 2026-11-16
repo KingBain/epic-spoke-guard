@@ -62,6 +62,10 @@ kbd, .punctuation { white-space: nowrap; }
 .dimensions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .unit { color: var(--muted); font-size: 11px; }
 .actions { display: flex; gap: 8px; margin-top: 16px; }
+.sharing { margin-top: 8px; }
+#share { width: 100%; font-size: 13px; }
+#share-status:empty { display: none; }
+
 .primary { flex: 1; background: var(--accent); color: #1a250f; border-color: transparent; }
 .primary:hover:enabled { background: #e0ffa3; }
 
