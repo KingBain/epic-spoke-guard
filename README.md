@@ -6,6 +6,8 @@ A customizable 210 mm bicycle spoke guard. Use the browser customizer to set the
 
 Choose **Complete guard** for a single STL. For a two-colour print, export **Black body** and **White letter faces** with identical settings, then import them as parts of one object in your slicer.
 
+Use **Share settings** to copy a link with the current form values. Opening the link restores those settings and generates the model.
+
 ## GitHub Pages
 
 1. In the repository settings, open **Pages** and set **Build and deployment → Source** to **GitHub Actions**.
